@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://mozapps/content/preferences/preferences.css"?>
+<?xml-stylesheet href="chrome://browser/skin/preferences/preferences.css"?>
+<!DOCTYPE prefwindow SYSTEM "chrome://cachelist/locale/prefs.dtd">
+<prefwindow id="cachelist-preferences" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="&prefwindow.title;">
+  <prefpane id="pane1" label="&prefpane.title;" onpaneload="init();">
+    <preferences>
+      <preference id="extensions.cachelist.downloadDir"       name="extensions.cachelist.downloadDir"       type="file" />
+      <preference id="extensions.cachelist.tempDir"           name="extensions.cachelist.tempDir"           type="file" />
+      <preference id="extensions.cachelist.urlFilter"         name="extensions.cachelist.urlFilter"         type="string" />
+      <preference id="extensions.cachelist.contentTypeFilter" name="extensions.cachelist.contentTypeFilter" type="string" />
+    </preferences>
+
+    <groupbox>
+      <caption label="&directoryGroup.label;" />
+      <grid flex="1">
+        <columns>
+          <column />
+          <column flex="1" />
+          <column />
+        </columns>
+        <rows>
+          <row>
+            <label accesskey="&downloadDirFilefield.accesskey;" control="downloadDirBrowseButton">&downloadDirFilefield.label;</label>
+            <filefield id="downloadDirFilefield" flex="1" />
+            <button id="downloadDirBrowseButton" oncommand="browseDownloadDir();" label="&downloadDirBrowseButton.label;" />
+          </row>
+          <row>
+            <label accesskey="&tempDirFilefield.accesskey;" control="tempDirBrowseButton">&tempDirFilefield.label;</label>
+            <filefield id="tempDirFilefield" flex="1" />
+            <button id="tempDirBrowseButton" oncommand="browseTempDir();" label="&tempDirBrowseButton.label;" />
+          </row>
+        </rows>
+      </grid>
+    </groupbox>
+
+    <groupbox>
+      <caption label="&filterGroup.label;" />
+      <grid>
+        <columns>
+          <column />
+          <column flex="1" />
+        </columns>
+        <rows>
+          <row>
+            <label accesskey="&contentTypeFilterTextbox.accesskey;" control="contentTypeFilterTextbox">&contentTypeFilterTextbox.label;</label>
+            <textbox id="contentTypeFilterTextbox" preference="extensions.cachelist.contentTypeFilter" flex="1" />
+          </row>
+          <row>
+            <label accesskey="&urlFilterTextbox.accesskey;" control="urlFilterTextbox">&urlFilterTextbox.label;</label>
+            <textbox id="urlFilterTextbox" preference="extensions.cachelist.urlFilter" flex="1" />
+          </row>
+        </rows>
+      </grid>
+    </groupbox>
+
+  </prefpane>
+  <script type="application/x-javascript" src="prefs.js" />
+</prefwindow>

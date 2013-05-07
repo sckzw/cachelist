@@ -1,0 +1,29 @@
+#cachelist-toolbarbutton
+{
+    list-style-image: url( "chrome://cachelist/skin/toolbarbutton.png" );
+}
+
+/* close button */
+#cachelist-closebutton {
+    list-style-image: url( "chrome://global/skin/icons/close.png" );
+    border: none;
+    -moz-appearance: none;
+    -moz-image-region: rect( 0, 16px, 16px, 0 );
+}
+
+#cachelist-closebutton:hover {
+    -moz-image-region: rect( 0, 32px, 16px, 16px );
+}
+
+#cachelist-closebutton:hover:active {
+    -moz-image-region: rect( 0, 48px, 16px, 32px );
+}
+
+treechildren::-moz-tree-checkbox(checked) {
+    list-style-image: url(chrome://global/skin/checkbox/cbox-check.gif);
+}
+
+#cachelist-tree
+{
+    margin-bottom: 2px;
+}

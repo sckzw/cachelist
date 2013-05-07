@@ -1,0 +1,6 @@
+content   cachelist                 chrome/content/
+skin      cachelist   classic/1.0   chrome/skin/
+locale    cachelist   en-US         chrome/locale/en-US/
+
+overlay   chrome://browser/content/browser.xul   chrome://cachelist/content/cachelist.xul
+style chrome://global/content/customizeToolbar.xul chrome://cachelist/skin/cachelist.css

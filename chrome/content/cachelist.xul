@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="chrome://cachelist/skin/cachelist.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://cachelist/locale/cachelist.dtd">
+<overlay id="cachelist-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script src="cachectrl.js"/>
+  <script src="cachedata.js"/>
+  <script src="cachetreeview.js"/>
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="cachelist-strings" src="chrome://cachelist/locale/cachelist.properties"/>
+  </stringbundleset>
+
+  <!--
+  <menupopup id="menu_ToolsPopup">
+    <menuitem id="cachelist-menuitem" command="cachelist-toggle-command" observes="cachelist-checked-state" />
+  </menupopup>
+  -->
+
+  <commandset>
+    <command id="cachelist-save-command"     oncommand="cacheCtrl.onSaveCommand();"    label="&cachelist.save.label;"     accesskey="&cachelist.save.accesskey;" />
+    <command id="cachelist-saveas-command"   oncommand="cacheCtrl.onSaveAsCommand();"  label="&cachelist.saveas.label;"   accesskey="&cachelist.saveas.accesskey;" />
+    <command id="cachelist-clear-command"    oncommand="cacheCtrl.onClearCommand();"   label="&cachelist.clear.label;"    accesskey="&cachelist.clear.accesskey;" />
+    <command id="cachelist-remove-command"   oncommand="cacheCtrl.onRemoveCommand();"  label="&cachelist.remove.label;"   accesskey="&cachelist.remove.accesskey;" />
+
+    <command id="cachelist-open-url-command" oncommand="cacheCtrl.onOpenUrlCommand();" label="&cachelist.open-url.label;" accesskey="&cachelist.open-url.accesskey;" />
+    <command id="cachelist-copy-url-command" oncommand="cacheCtrl.onCopyUrlCommand();" label="&cachelist.copy-url.label;" accesskey="&cachelist.copy-url.accesskey;" />
+
+    <command id="cachelist-open-file-command" oncommand="cacheCtrl.onOpenFileCommand();" label="&cachelist.open-file.label;" accesskey="&cachelist.open-file.accesskey;" />
+    <command id="cachelist-open-folder-command" oncommand="cacheCtrl.onOpenFolderCommand();" label="&cachelist.open-folder.label;" accesskey="&cachelist.open-folder.accesskey;" />
+
+    <command id="cachelist-toggle-command"   oncommand="cacheCtrl.onToggleCommand();"  label="&cachelist.label;" />
+    <command id="cachelist-close-command"    oncommand="cacheCtrl.onCloseCommand();" />
+  </commandset>
+
+  <broadcasterset>
+    <broadcaster id="cachelist-display-state" collapsed="true" />
+    <broadcaster id="cachelist-checked-state" type="checkbox" autocheck="false" />
+  </broadcasterset>
+
+  <toolbarpalette id="BrowserToolbarPalette">
+    <toolbarbutton id="cachelist-toolbarbutton" command="cachelist-toggle-command" observes="cachelist-checked-state"
+                   class="toolbarbutton-1 chromeclass-toolbar-additional" label="&cachelist.label;" tooltiptext="&cachelist.toolbarbutton.tooltip;" />
+  </toolbarpalette>
+
+  <popupset>
+    <menupopup id="contextmenu">
+      <menuitem command="cachelist-save-command" default="true" />
+      <menuitem command="cachelist-saveas-command" />
+      <menuseparator />
+      <!--<menuitem command="cachelist-open-url-command" />-->
+      <!--<menuitem command="cachelist-open-file-command" />-->
+      <menuitem command="cachelist-open-folder-command" />
+      <menuitem command="cachelist-copy-url-command" />
+      <menuseparator />
+      <menuitem command="cachelist-clear-command" />
+      <menuitem command="cachelist-remove-command" />
+    </menupopup>
+  </popupset>
+
+  <vbox id="appcontent">
+    <splitter id="cachelist-splitter" observes="cachelist-display-state" />
+    <vbox id="cachelist-content" observes="cachelist-display-state" persist="height">
+      <hbox align="center">
+        <toolbarbutton id="cachelist-closebutton" command="cachelist-close-command" />
+
+        <button command="cachelist-save-command" />
+        <button command="cachelist-saveas-command" />
+        <button command="cachelist-remove-command" />
+        <button command="cachelist-clear-command" />
+
+        <label value="&cachelist.url-filter.label;" accesskey="&cachelist.url-filter.accesskey;" control="cachelist-url-filter" />
+        <textbox id="cachelist-url-filter" />
+        <label value="&cachelist.content-type-filter.label;" accesskey="&cachelist.content-type-filter.accesskey;" control="cachelist-content-type-filter" />
+        <textbox id="cachelist-content-type-filter" />
+      </hbox>
+      <tree id="cachelist-tree" enableColumnDrag="true" flex="1" onselect="cacheCtrl.onSelect();">
+        <treecols>
+          <treecol id="cachelist-url"            label="&cachelist.url.label;"            persist="hidden ordinal width" flex="1" primary="true" /><splitter class="tree-splitter" />
+          <treecol id="cachelist-content-type"   label="&cachelist.content-type.label;"   persist="hidden ordinal width" flex="1" /><splitter class="tree-splitter" />
+          <treecol id="cachelist-content-length" label="&cachelist.content-length.label;" persist="hidden ordinal width" flex="1" /><splitter class="tree-splitter" />
+          <treecol id="cachelist-size"           label="&cachelist.size.label;"           persist="hidden ordinal width" flex="1" /><splitter class="tree-splitter" />
+          <treecol id="cachelist-progress"       label="&cachelist.progress.label;"       persist="hidden ordinal width" flex="1" type="progressmeter" /><splitter class="tree-splitter" />
+          <treecol id="cachelist-save"           label="&cachelist.save.label;"           persist="hidden ordinal width" flex="1" type="checkbox" /><splitter class="tree-splitter" />
+          <treecol id="cachelist-done"           label="&cachelist.done.label;"           persist="hidden ordinal width" flex="1" type="checkbox" /><splitter class="tree-splitter" />
+          <treecol id="cachelist-path"           label="&cachelist.path.label;"           persist="hidden ordinal width" flex="1" />
+        </treecols>
+        <treechildren flex="1" context="contextmenu" ondblclick="cacheCtrl.onSaveCommand();" />
+      </tree>
+    </vbox>
+  </vbox>
+</overlay>

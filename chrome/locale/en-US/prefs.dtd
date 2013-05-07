@@ -1,0 +1,18 @@
+<!ENTITY prefwindow.title "Cache List preferences">
+<!ENTITY prefpane.title "Cache List preferences">
+
+<!ENTITY directoryGroup.label "Directory">
+<!ENTITY filterGroup.label "Filter">
+
+<!ENTITY downloadDirFilefield.label "Download directory:">
+<!ENTITY downloadDirFilefield.accesskey "D">
+<!ENTITY downloadDirBrowseButton.label "Browse...">
+
+<!ENTITY tempDirFilefield.label "Temporary directory:">
+<!ENTITY tempDirFilefield.accesskey "T">
+<!ENTITY tempDirBrowseButton.label "Browse...">
+
+<!ENTITY contentTypeFilterTextbox.label "Content-Type filter:">
+<!ENTITY contentTypeFilterTextbox.accesskey "C">
+<!ENTITY urlFilterTextbox.label "URL filter:">
+<!ENTITY urlFilterTextbox.accesskey "U">

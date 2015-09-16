@@ -37,8 +37,8 @@ CacheTreeView.prototype = {
                 return cacheData._progress;
             else if ( col.id == "cachelist-save" )
                 return cacheData._isSaved;
-            else if ( col.id == "cachelist-done" )
-                return cacheData._isDone;
+            else if ( col.id == "cachelist-cache" )
+                return cacheData._isCached;
             else
                 return 0;
         }
@@ -49,10 +49,14 @@ CacheTreeView.prototype = {
         if ( cacheData ) {
             switch ( col.id ) {
                 case "cachelist-url":            return cacheData._url;
+                case "cachelist-id":             return cacheData._id;
+                case "cachelist-index":          return cacheData._index;
+                case "cachelist-range":          return cacheData._range;
                 case "cachelist-content-type":   return cacheData._contentType;
                 case "cachelist-content-length": return cacheData._contentLength;
-                case "cachelist-size":           return cacheData._size;
-                case "cachelist-path":           return cacheData._file.path;
+                case "cachelist-cache-size":     return cacheData._size;
+                case "cachelist-cache-file":     return cacheData._file.leafName;
+                case "cachelist-saved-file":     return cacheData._savedFile.leafName;
             }
         }
     },

@@ -3,35 +3,42 @@
 <!ENTITY cachelist.toolbarbutton.tooltip "Toggle Cache List display">
 
 <!ENTITY cachelist.url.label "URL">
+<!ENTITY cachelist.id.label "ID">
+<!ENTITY cachelist.index.label "Index">
+<!ENTITY cachelist.range.label "Range">
 <!ENTITY cachelist.content-type.label "Content-Type">
 <!ENTITY cachelist.content-length.label "Content-Length">
-<!ENTITY cachelist.size.label "Size">
 <!ENTITY cachelist.progress.label "Progress">
-<!ENTITY cachelist.done.label "Done">
-<!ENTITY cachelist.path.label "Path">
+<!ENTITY cachelist.cache-size.label "Cache Size">
+<!ENTITY cachelist.cache.label "Cache">
+<!ENTITY cachelist.cache-file.label "Cache File">
+<!ENTITY cachelist.saved-file.label "Saved File">
 
 <!ENTITY cachelist.save.label "Save">
 <!ENTITY cachelist.saveas.label "Save As...">
 <!ENTITY cachelist.clear.label "Clear">
 <!ENTITY cachelist.remove.label "Remove">
-<!ENTITY cachelist.open-url.label "Open URL">
 <!ENTITY cachelist.copy-url.label "Copy URL">
-<!ENTITY cachelist.open-file.label "Open File...">
 <!ENTITY cachelist.open-folder.label "Open Folder...">
 
 <!ENTITY cachelist.save.accesskey "S">
 <!ENTITY cachelist.saveas.accesskey "A">
 <!ENTITY cachelist.clear.accesskey "C">
-<!ENTITY cachelist.remove.accesskey "R">
-
-<!ENTITY cachelist.open-url.accesskey "P">
+<!ENTITY cachelist.remove.accesskey "D">
 <!ENTITY cachelist.copy-url.accesskey "U">
-
-<!ENTITY cachelist.open-file.accesskey "I">
 <!ENTITY cachelist.open-folder.accesskey "O">
 
-<!ENTITY cachelist.url-filter.label "URL filter:">
+<!ENTITY cachelist.url-filter.label "URL Filter:">
 <!ENTITY cachelist.url-filter.accesskey "U">
 
-<!ENTITY cachelist.content-type-filter.label "Content-Type filter:">
+<!ENTITY cachelist.content-type-filter.label "Content-Type Filter:">
 <!ENTITY cachelist.content-type-filter.accesskey "T">
+
+<!ENTITY cachelist.id-filter.label "ID Filter:">
+<!ENTITY cachelist.id-filter.accesskey "I">
+
+<!ENTITY cachelist.index-filter.label "Index Filter:">
+<!ENTITY cachelist.index-filter.accesskey "N">
+
+<!ENTITY cachelist.range-filter.label "Range Filter:">
+<!ENTITY cachelist.range-filter.accesskey "R">

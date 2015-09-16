@@ -95,6 +95,25 @@ var cacheCtrl = {
 
             cacheData.init( aSubject, this._tempDirectory );
 
+            var idParameterFilter = "id" + "="; //document.getElementById( "cachelist-id-filter" ).value;
+            var indexParameterFilter = "segment" + "="; //document.getElementById( "cachelist-index-filter" ).value;
+            var rangeParameterFilter = "range" + "="; //document.getElementById( "cachelist-size-filter" ).value;
+
+			// URL„Åã„Çâ„Éë„É©„É°„Éº„Çø„ÇíÊäΩÂá∫„Åô„Çã
+			var parameters = channel.URI.QueryInterface( Ci.nsIURL ).query.split( "&" );
+
+			for ( var i = 0; i < parameters.length; i ++ ) {
+				if ( cacheData._id == null && parameters[i].lastIndexOf( idParameterFilter, 0 ) == 0 ) {
+					cacheData._id = parameters[i].substr( idParameterFilter.length );
+				}
+				if ( cacheData._index == null && parameters[i].lastIndexOf( indexParameterFilter, 0 ) == 0 ) {
+					cacheData._index = parameters[i].substr( indexParameterFilter.length );
+				}
+				if ( cacheData._range == null && parameters[i].lastIndexOf( rangeParameterFilter, 0 ) == 0 ) {
+					cacheData._range = parameters[i].substr( rangeParameterFilter.length );
+				}
+			}
+
             this._cacheList.unshift( cacheData );
             this._cacheTreeBox.rowCountChanged( 0, 1 );
 
@@ -166,7 +185,7 @@ var cacheCtrl = {
         */
     },
 
-    onSaveCommand: function() {
+    onSaveCommand: function( isSaveAs ) {
         var cacheData = this.getCurrentCacheData();
 
         if ( ! cacheData )
@@ -176,16 +195,17 @@ var cacheCtrl = {
         var mimeInfo = this._mimeService.getFromTypeAndExtension( cacheData._contentType, "" );
         var fileExtension;
         var fileName;
+        var file;
 
-        // URLÇÃägí£éqÇ»Çµ MIMEÇÃägí£éqÇ†ÇË Å® MIMEÇÃägí£éq
-        // URLÇÃägí£éqÇ†ÇË MIMEÇÃägí£éqÇ†ÇË Å® URLÇ∆MIMEÇÃägí£éqÇ™àÍívÇµÇΩÇ‡ÇÃ or àÍívÇµÇ»ÇØÇÍÇŒMIMEÇÃägí£éq
-        // URLÇÃägí£éqÇ»Çµ MIMEÇÃägí£éqÇ»Çµ Å® 
-        // URLÇÃägí£éqÇ†ÇË MIMEÇÃägí£éqÇ»Çµ Å® URLÇÃägí£éq
+        // URL„ÅÆÊã°ÂºµÂ≠ê„Å™„Åó MIME„ÅÆÊã°ÂºµÂ≠ê„ÅÇ„Çä ‚Üí MIME„ÅÆÊã°ÂºµÂ≠ê
+        // URL„ÅÆÊã°ÂºµÂ≠ê„ÅÇ„Çä MIME„ÅÆÊã°ÂºµÂ≠ê„ÅÇ„Çä ‚Üí URL„Å®MIME„ÅÆÊã°ÂºµÂ≠ê„Åå‰∏ÄËá¥„Åó„Åü„ÇÇ„ÅÆ or ‰∏ÄËá¥„Åó„Å™„Åë„Çå„Å∞MIME„ÅÆÊã°ÂºµÂ≠ê
+        // URL„ÅÆÊã°ÂºµÂ≠ê„Å™„Åó MIME„ÅÆÊã°ÂºµÂ≠ê„Å™„Åó ‚Üí 
+        // URL„ÅÆÊã°ÂºµÂ≠ê„ÅÇ„Çä MIME„ÅÆÊã°ÂºµÂ≠ê„Å™„Åó ‚Üí URL„ÅÆÊã°ÂºµÂ≠ê
 
         if ( mimeInfo.extensionExists( url.fileExtension ) )
             fileExtension = url.fileExtension;
         else {
-            // ñ¢ìoò^ÇÃMIME-TypeÇÃèÍçáÇÕó·äOÇ™î≠ê∂Ç∑ÇÈÅBó·äOÇÉLÉÉÉbÉ`ÇµÇƒURLÇÃägí£éqÇê›íËÇ∑ÇÈÅB
+            // Êú™ÁôªÈå≤„ÅÆMIME-Type„ÅÆÂ†¥Âêà„ÅØ‰æãÂ§ñ„ÅåÁô∫Áîü„Åô„Çã„ÄÇ‰æãÂ§ñ„Çí„Ç≠„É£„ÉÉ„ÉÅ„Åó„Å¶URL„ÅÆÊã°ÂºµÂ≠ê„ÇíË®≠ÂÆö„Åô„Çã„ÄÇ
             try {
                 fileExtension = mimeInfo.primaryExtension;
             } catch ( ex ) {
@@ -193,100 +213,142 @@ var cacheCtrl = {
             }
         }
 
-        if ( fileExtension == "" )
-            fileName = url.fileBaseName;
-        else
-            fileName = url.fileBaseName + "." + fileExtension;
+		if ( cacheData._id == null )
+			fileName = url.fileBaseName + "." + fileExtension;
+		else
+			fileName = url.fileBaseName + "-" + cacheData._id + "." + fileExtension;
 
-        var file = Cc["@mozilla.org/file/local;1"].createInstance( Ci.nsILocalFile );
-        file.initWithFile( this._downloadDirectory );
-        file.append( fileName );
-        file.createUnique( Ci.nsIFile.NORMAL_FILE_TYPE, 0664 );
+		if ( isSaveAs ) {
+	        var fp = Cc["@mozilla.org/filepicker;1"].createInstance( Ci.nsIFilePicker );
 
-        try {
-            cacheData.save( file, true );
-        } catch ( ex ) {
-            alert( ex.message ); // TODO
-        }
+	        // TODO: properties„Åã„Çâ„Çø„Ç§„Éà„É´„ÇíË®≠ÂÆö
+	        fp.init( window, "Select a File", Ci.nsIFilePicker.modeSave );
+
+	        fp.defaultString = fileName;
+
+	        // Êã°ÂºµÂ≠ê„Éï„Ç£„É´„Çø„ÇíË®≠ÂÆö
+	        var extensions = mimeInfo.getFileExtensions();
+	        var extensionFilters = "";
+
+	        while ( extensions.hasMore() ) {
+	            if ( extensionFilters == "" )
+	                extensionFilters = "*." + extensions.getNext();
+	            else
+	                extensionFilters = extensionFilters + "; *." + extensions.getNext();
+	        }
+
+	        if ( extensionFilters != "" )
+	            fp.appendFilter( extensionFilters, extensionFilters );
+
+	        if ( fileExtension != "" && ! mimeInfo.extensionExists( fileExtension ) ) {
+	            extensionFilters = "*." + fileExtension;
+	            fp.appendFilter( extensionFilters, extensionFilters );
+	        }
+
+	        fp.appendFilters( Ci.nsIFilePicker.filterAll );
+
+	        if ( fp.show() == Ci.nsIFilePicker.returnCancel )
+	            return;
+
+			file = fp.file;
+		}
+		else {
+	        file = Cc["@mozilla.org/file/local;1"].createInstance( Ci.nsILocalFile );
+	        file.initWithFile( this._downloadDirectory );
+	        file.append( fileName );
+	        file.createUnique( Ci.nsIFile.NORMAL_FILE_TYPE, 0664 );
+	    }
+
+		if ( cacheData._id == null ) {
+	        try {
+	            cacheData.save( file, true );
+	        } catch ( ex ) {
+	            alert( ex.message ); // TODO
+	        }
+	    }
+	    else {
+	        var joinCacheList = [];
+
+	        for ( var i = 0; i < this._cacheList.length; i ++ ) {
+	        	if ( this._cacheList[i]._id == cacheData._id ) {
+	        		joinCacheList.unshift( this._cacheList[i] );
+	        	}
+	        }
+
+			if ( cacheData._index != null ) {
+				joinCacheList.sort( function( a, b ) {
+					if ( parseInt( a._index, 10 ) > parseInt( b._index, 10 ) ) return 1;
+					if ( parseInt( a._index, 10 ) < parseInt( b._index, 10 ) ) return -1;
+					return 0;
+	    		} );
+			}
+			else if ( cacheData._range != null ) {
+				joinCacheList.sort( function( a, b ) {
+					if ( parseInt( a._range, 10 ) > parseInt( b._range, 10 ) ) return 1;
+					if ( parseInt( a._range, 10 ) < parseInt( b._range, 10 ) ) return -1;
+					return 0;
+	    		} );
+			}
+
+    	    var fileOutputStream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance( Ci.nsIFileOutputStream );
+    	    var fileInputStream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance( Ci.nsIFileInputStream );
+            var binaryInputStream = Cc["@mozilla.org/binaryinputstream;1"].createInstance( Ci.nsIBinaryInputStream );
+			var binaryData;
+			var binaryDataSize;
+
+			try {
+	    	    fileOutputStream.init( file, 0x0a, -1, 0 ); // PR_WRONLY | PR_CREATE_FILE
+
+		        for ( var i = 0; i < joinCacheList.length; i ++ ) {
+			        	joinCacheList[i].close();
+
+						fileInputStream.init( joinCacheList[i]._file, 0x01, -1, 0 ); // PR_RDONLY
+						binaryInputStream.setInputStream( fileInputStream );
+
+						if ( i == joinCacheList.length - 1 ) {
+							binaryDataSize = binaryInputStream.available();
+						}
+						else if ( joinCacheList[i]._range == null || joinCacheList[i + 1]._range == null ) {
+							binaryDataSize = binaryInputStream.available();
+						}
+						else {
+							binaryDataSize = joinCacheList[i + 1]._range.split( "-" )[0] - joinCacheList[i]._range.split( "-" )[0];
+
+							if ( binaryDataSize < 0 || binaryDataSize > binaryInputStream.available() )
+								throw NS_ERROR_FILE_COPY_OR_MOVE_FAILED;
+						}
+
+						binaryData = binaryInputStream.readBytes( binaryDataSize );
+						fileOutputStream.write( binaryData, binaryData.length );
+
+						binaryInputStream.close();
+						fileInputStream.close();
+
+						joinCacheList[i]._savedFile = file;
+						joinCacheList[i]._isSaved = true;
+
+			        	joinCacheList[i].resume();
+		        }
+
+		        fileOutputStream.close();
+			} catch ( ex ) {
+			    alert( ex.message );
+			}
+	    }
     },
 
-    onSaveAsCommand: function() {
-        var cacheData = this.getCurrentCacheData();
-
-        if ( ! cacheData )
-            return;
-
-        var fp = Cc["@mozilla.org/filepicker;1"].createInstance( Ci.nsIFilePicker );
-
-        // TODO: propertiesÇ©ÇÁÉ^ÉCÉgÉãÇê›íË
-        fp.init( window, "Select a File", Ci.nsIFilePicker.modeSave );
-
-        // ÉtÉ@ÉCÉãñºÇê›íË
-        var url = this._ioService.newURI( cacheData._url, null, null ).QueryInterface( Ci.nsIURL );
-        var mimeInfo = this._mimeService.getFromTypeAndExtension( cacheData._contentType, "" );
-        var fileExtension;
-        var fileName;
-
-        if ( mimeInfo.extensionExists( url.fileExtension ) )
-            fileExtension = url.fileExtension;
-        else {
-            try {
-                fileExtension = mimeInfo.primaryExtension;
-            } catch ( ex ) {
-                fileExtension = url.fileExtension;
-            }
-        }
-
-        if ( fileExtension == "" )
-            fileName = url.fileBaseName;
-        else
-            fileName = url.fileBaseName + "." + fileExtension;
-
-        fp.defaultString = fileName;
-
-        // ägí£éqÉtÉBÉãÉ^Çê›íË
-        var extensions = mimeInfo.getFileExtensions();
-        var extensionFilters = "";
-
-        while ( extensions.hasMore() ) {
-            if ( extensionFilters == "" )
-                extensionFilters = "*." + extensions.getNext();
-            else
-                extensionFilters = extensionFilters + "; *." + extensions.getNext();
-        }
-
-        if ( extensionFilters != "" )
-            fp.appendFilter( extensionFilters, extensionFilters );
-
-        if ( fileExtension != "" && ! mimeInfo.extensionExists( fileExtension ) ) {
-            extensionFilters = "*." + fileExtension;
-            fp.appendFilter( extensionFilters, extensionFilters );
-        }
-
-        fp.appendFilters( Ci.nsIFilePicker.filterAll );
-
-        if ( fp.show() == Ci.nsIFilePicker.returnCancel )
-            return;
-
-        try {
-            cacheData.save( fp.file, true );
-        } catch ( ex ) {
-            alert( ex.message );
-        }
-    },
-
-    onClearCommand: function() {
+    onClearCommand: function( isForced ) {
         if ( this._cacheList.length == 0 )
             return;
 
-        var errorOccurred = false;
+        var exception;
 
         this._cacheTreeBox.beginUpdateBatch();
 
         for ( var i = 0; i < this._cacheList.length; i ++ ) {
             var cacheData = this._cacheList[i];
 
-            if ( cacheData._isDone ) {
+            if ( cacheData._isCached || isForced ) {
                 try {
                     cacheData.remove( true );
                 } catch ( ex ) {
@@ -302,33 +364,8 @@ var cacheCtrl = {
 
         this._cacheTreeBox.endUpdateBatch();
 
-        if ( errorOccurred )
-            alert( "Error" ); // TODO
-    },
-
-    onClearAllCommand: function() {
-        if ( this._cacheList.length == 0 )
-            return;
-
-        var errorOccurred = false;
-
-        this._cacheTreeBox.beginUpdateBatch();
-
-        for ( var i = 0; i < this._cacheList.length; i ++ ) {
-            try {
-                this._cacheList[i].remove( true );
-            } catch ( ex ) {
-                errorOccurred = true;
-            }
-        }
-
-        this._cacheTreeBox.rowCountChanged( 0, this._cacheList.length * -1 );
-        this._cacheList.length = 0;
-
-        this._cacheTreeBox.endUpdateBatch();
-
-        if ( errorOccurred )
-            alert( "Error" ); // TODO
+        if ( exception )
+            alert( exception.message );
     },
 
     onRemoveCommand: function() {
@@ -382,14 +419,20 @@ var cacheCtrl = {
 
     onOpenFolderCommand: function () {
         var cacheData = this.getCurrentCacheData();
+		var file;
 
         if ( ! cacheData )
             return;
 
+		if ( cacheData._savedFile )
+			file = cacheData._savedFile;
+		else
+			file = cacheData._file;
+
         try {
-            cacheData._file.QueryInterface( Ci.nsILocalFile ).reveal();
+            file.QueryInterface( Ci.nsILocalFile ).reveal();
         } catch ( ex ) {
-            var parent = cacheData._file.parent.QueryInterface( Ci.nsILocalFile );
+            var parent = file.parent.QueryInterface( Ci.nsILocalFile );
 
             if ( ! parent )
                 return;
@@ -425,7 +468,7 @@ var cacheCtrl = {
         }
     },
 
-    // popupshowingÇ≈óLå¯/ñ≥å¯êÿÇËë÷Ç¶
+    // popupshowing„ÅßÊúâÂäπ/ÁÑ°ÂäπÂàá„ÇäÊõø„Åà
     // onOpenCommand: function( event ) {
         // TODO: Open containing folder
     // },

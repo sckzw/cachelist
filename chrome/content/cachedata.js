@@ -2,24 +2,27 @@ function CacheData() {
 }
 
 CacheData.prototype = {
-    _originalStreamListener: null,
-    _fileOutputStream: null,
-    _isClosed: true,
     _file: null,
+    _fileOutputStream: null,
+    _originalStreamListener: null,
     _url: null,
+    _id: null,
+    _index: null,
+    _range: null,
     _contentType: null,
     _contentLength: null,
     _size: 0,
-    _isDone: false,
+    _isCached: false,
     _isSaved: false,
-    // _originalEventSink: null,
+    _savedFile: null,
+	_isClosed: true,
 
     get _progress() {
         if ( this._contentLength > 0 ) {
             return 100 * this._size / this._contentLength;
         }
         else {
-            if ( this._isDone )
+            if ( this._isCached )
                 return 100;
             else
                 return 0;
@@ -44,32 +47,26 @@ CacheData.prototype = {
 
         // Set StreamListener and save original StreamListener
         this._originalStreamListener = aRequest.QueryInterface( Ci.nsITraceableChannel ).setNewListener( this );
- 
-        // this._originalEventSink = channel.notificationCallbacks;
-        // channel.notificationCallbacks = this;
     },
 
-    save: function ( aFile, aForced ) {
-        var exception;
-
+	close: function () {
         if ( ! this._isClosed ) {
             this._fileOutputStream.close();
             this._isClosed = true;
         }
+	},
 
-        try {
-            this._file.moveTo( aFile.parent, aFile.leafName );
-            this._isSaved = true;
-        }
-        catch ( ex ) {
-            exception = ex;
-        }
+	resume: function () {
+		if ( this._isClosed ) {
+	        this._fileOutputStream.init( this._file, 0x12, -1, 0 ); // PR_WRONLY | PR_APPEND
+	        this._isClosed = false;
+	    }
+	},
 
-        this._fileOutputStream.init( this._file, 0x12, -1, 0 ); // PR_WRONLY | PR_APPEND
-        this._isClosed = false;
-
-        if ( exception )
-            throw exception;
+    save: function ( aFile, aForced ) {
+        this._file.copyTo( aFile.parent, aFile.leafName );
+        this._savedFile = aFile;
+        this._isSaved = true;
     },
 
     remove: function ( aForced ) {
@@ -78,8 +75,7 @@ CacheData.prototype = {
             this._isClosed = true;
         }
 
-        if ( ! this._isSaved )
-            this._file.remove( false );
+		this._file.remove( false );
     },
 
     // nsIStreamListener
@@ -89,7 +85,7 @@ CacheData.prototype = {
     },
 
     onStopRequest: function ( aRequest, aContext, aStatusCode ) {
-        this._isDone = true;
+        this._isCached = true;
 
         if ( this._originalStreamListener.onStopRequest )
             this._originalStreamListener.onStopRequest( aRequest, aContext, aStatusCode );
@@ -121,25 +117,6 @@ CacheData.prototype = {
         }
     },
 
-    /*
-    // nsIProgressEventSink
-    onProgress: function ( aRequest, aContext, aProgress, aProgressMax ) {
-    },
-
-    onStatus: function ( aRequest, aContext, aStatus, aStatusArg ) {
-    },
-
-    // nsIChannelEventSink
-    onChannelRedirect: function ( aOldChannel, aNewChannel, aFlags ) {
-        // aNewChannel.notificationCallbacks = this;
-    },
-
-    asyncOnChannelRedirect: function( aOldChannel, aNewChannel, aFlags, aCallback ) {
-        // aNewChannel.notificationCallbacks = this;
-        aCallback.onRedirectVerifyCallback( Cr.NS_SUCCEEDED );
-    },
-    */
-
     // nsIInterfaceRequestor
     getInterface: function ( aIID ) {
         try {
@@ -152,8 +129,6 @@ CacheData.prototype = {
     QueryInterface: function ( aIID ) {
         if ( aIID.equals( Ci.nsISupports           ) ||
              aIID.equals( Ci.nsIInterfaceRequestor ) ||
-             // aIID.equals( Ci.nsIProgressEventSink  ) ||
-             // aIID.equals( Ci.nsIChannelEventSink   ) ||
              aIID.equals( Ci.nsIStreamListener     ) ) return this;
 
         throw Cr.NS_NOINTERFACE;

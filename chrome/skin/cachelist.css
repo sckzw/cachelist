@@ -3,20 +3,19 @@
     list-style-image: url( "chrome://cachelist/skin/toolbarbutton.png" );
 }
 
-/* close button */
 #cachelist-closebutton {
     list-style-image: url( "chrome://global/skin/icons/close.png" );
     border: none;
     -moz-appearance: none;
-    -moz-image-region: rect( 0, 16px, 16px, 0 );
+    -moz-image-region: rect( 0, 20px, 20px, 0 );
 }
 
 #cachelist-closebutton:hover {
-    -moz-image-region: rect( 0, 32px, 16px, 16px );
+    -moz-image-region: rect( 0, 40px, 20px, 20px );
 }
 
 #cachelist-closebutton:hover:active {
-    -moz-image-region: rect( 0, 48px, 16px, 32px );
+    -moz-image-region: rect( 0, 60px, 20px, 40px );
 }
 
 treechildren::-moz-tree-checkbox(checked) {

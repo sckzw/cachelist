@@ -32,6 +32,9 @@ var cacheCtrl = {
 
         document.getElementById( "cachelist-url-filter" ).value = this._prefBranch.getCharPref( "urlFilter" );
         document.getElementById( "cachelist-content-type-filter" ).value = this._prefBranch.getCharPref( "contentTypeFilter" );
+        document.getElementById( "cachelist-id-filter" ).value = this._prefBranch.getCharPref( "idFilter" );
+        document.getElementById( "cachelist-index-filter" ).value = this._prefBranch.getCharPref( "indexFilter" );
+        document.getElementById( "cachelist-range-filter" ).value = this._prefBranch.getCharPref( "rangeFilter" );
 
         this._prefBranch.QueryInterface( Ci.nsIPrefBranch2 );
         this._prefBranch.addObserver( "", this, false );
@@ -95,24 +98,24 @@ var cacheCtrl = {
 
             cacheData.init( aSubject, this._tempDirectory );
 
-            var idParameterFilter = "id" + "="; //document.getElementById( "cachelist-id-filter" ).value;
-            var indexParameterFilter = "segment" + "="; //document.getElementById( "cachelist-index-filter" ).value;
-            var rangeParameterFilter = "range" + "="; //document.getElementById( "cachelist-size-filter" ).value;
+            var idFilter = document.getElementById( "cachelist-id-filter" ).value + "="; // "id" + "=";
+            var indexFilter = document.getElementById( "cachelist-index-filter" ).value + "="; // "segment" + "=";
+            var rangeFilter = document.getElementById( "cachelist-range-filter" ).value + "="; // "range" + "=";
 
-			// URLからパラメータを抽出する
-			var parameters = channel.URI.QueryInterface( Ci.nsIURL ).query.split( "&" );
+             // URLからパラメータを抽出する
+             var parameters = channel.URI.QueryInterface( Ci.nsIURL ).query.split( "&" );
 
-			for ( var i = 0; i < parameters.length; i ++ ) {
-				if ( cacheData._id == null && parameters[i].lastIndexOf( idParameterFilter, 0 ) == 0 ) {
-					cacheData._id = parameters[i].substr( idParameterFilter.length );
-				}
-				if ( cacheData._index == null && parameters[i].lastIndexOf( indexParameterFilter, 0 ) == 0 ) {
-					cacheData._index = parameters[i].substr( indexParameterFilter.length );
-				}
-				if ( cacheData._range == null && parameters[i].lastIndexOf( rangeParameterFilter, 0 ) == 0 ) {
-					cacheData._range = parameters[i].substr( rangeParameterFilter.length );
-				}
-			}
+             for ( var i = 0; i < parameters.length; i ++ ) {
+                 if ( cacheData._id == null && parameters[i].lastIndexOf( idFilter, 0 ) == 0 ) {
+                     cacheData._id = parameters[i].substr( idFilter.length );
+                 }
+                 if ( cacheData._index == null && parameters[i].lastIndexOf( indexFilter, 0 ) == 0 ) {
+                     cacheData._index = parameters[i].substr( indexFilter.length );
+                 }
+                 if ( cacheData._range == null && parameters[i].lastIndexOf( rangeFilter, 0 ) == 0 ) {
+                     cacheData._range = parameters[i].substr( rangeFilter.length );
+                 }
+             }
 
             this._cacheList.unshift( cacheData );
             this._cacheTreeBox.rowCountChanged( 0, 1 );
@@ -213,128 +216,128 @@ var cacheCtrl = {
             }
         }
 
-		if ( cacheData._id == null )
-			fileName = url.fileBaseName + "." + fileExtension;
-		else
-			fileName = url.fileBaseName + "-" + cacheData._id + "." + fileExtension;
+         if ( cacheData._id == null )
+             fileName = url.fileBaseName + "." + fileExtension;
+         else
+             fileName = url.fileBaseName + "-" + cacheData._id + "." + fileExtension;
 
-		if ( isSaveAs ) {
-	        var fp = Cc["@mozilla.org/filepicker;1"].createInstance( Ci.nsIFilePicker );
+         if ( isSaveAs ) {
+             var fp = Cc["@mozilla.org/filepicker;1"].createInstance( Ci.nsIFilePicker );
 
-	        // TODO: propertiesからタイトルを設定
-	        fp.init( window, "Select a File", Ci.nsIFilePicker.modeSave );
+             // TODO: propertiesからタイトルを設定
+             fp.init( window, "Select a File", Ci.nsIFilePicker.modeSave );
 
-	        fp.defaultString = fileName;
+             fp.defaultString = fileName;
 
-	        // 拡張子フィルタを設定
-	        var extensions = mimeInfo.getFileExtensions();
-	        var extensionFilters = "";
+             // 拡張子フィルタを設定
+             var extensions = mimeInfo.getFileExtensions();
+             var extensionFilters = "";
 
-	        while ( extensions.hasMore() ) {
-	            if ( extensionFilters == "" )
-	                extensionFilters = "*." + extensions.getNext();
-	            else
-	                extensionFilters = extensionFilters + "; *." + extensions.getNext();
-	        }
+             while ( extensions.hasMore() ) {
+                 if ( extensionFilters == "" )
+                     extensionFilters = "*." + extensions.getNext();
+                 else
+                     extensionFilters = extensionFilters + "; *." + extensions.getNext();
+             }
 
-	        if ( extensionFilters != "" )
-	            fp.appendFilter( extensionFilters, extensionFilters );
+             if ( extensionFilters != "" )
+                 fp.appendFilter( extensionFilters, extensionFilters );
 
-	        if ( fileExtension != "" && ! mimeInfo.extensionExists( fileExtension ) ) {
-	            extensionFilters = "*." + fileExtension;
-	            fp.appendFilter( extensionFilters, extensionFilters );
-	        }
+             if ( fileExtension != "" && ! mimeInfo.extensionExists( fileExtension ) ) {
+                 extensionFilters = "*." + fileExtension;
+                 fp.appendFilter( extensionFilters, extensionFilters );
+             }
 
-	        fp.appendFilters( Ci.nsIFilePicker.filterAll );
+             fp.appendFilters( Ci.nsIFilePicker.filterAll );
 
-	        if ( fp.show() == Ci.nsIFilePicker.returnCancel )
-	            return;
+             if ( fp.show() == Ci.nsIFilePicker.returnCancel )
+                 return;
 
-			file = fp.file;
-		}
-		else {
-	        file = Cc["@mozilla.org/file/local;1"].createInstance( Ci.nsILocalFile );
-	        file.initWithFile( this._downloadDirectory );
-	        file.append( fileName );
-	        file.createUnique( Ci.nsIFile.NORMAL_FILE_TYPE, 0664 );
-	    }
+             file = fp.file;
+         }
+         else {
+             file = Cc["@mozilla.org/file/local;1"].createInstance( Ci.nsILocalFile );
+             file.initWithFile( this._downloadDirectory );
+             file.append( fileName );
+             file.createUnique( Ci.nsIFile.NORMAL_FILE_TYPE, 0664 );
+         }
 
-		if ( cacheData._id == null ) {
-	        try {
-	            cacheData.save( file, true );
-	        } catch ( ex ) {
-	            alert( ex.message ); // TODO
-	        }
-	    }
-	    else {
-	        var joinCacheList = [];
+         if ( cacheData._id == null ) {
+             try {
+                 cacheData.save( file, true );
+             } catch ( ex ) {
+                 alert( ex.message ); // TODO
+             }
+         }
+         else {
+             var joinCacheList = [];
 
-	        for ( var i = 0; i < this._cacheList.length; i ++ ) {
-	        	if ( this._cacheList[i]._id == cacheData._id ) {
-	        		joinCacheList.unshift( this._cacheList[i] );
-	        	}
-	        }
+             for ( var i = 0; i < this._cacheList.length; i ++ ) {
+                 if ( this._cacheList[i]._id == cacheData._id ) {
+                     joinCacheList.unshift( this._cacheList[i] );
+                 }
+             }
 
-			if ( cacheData._index != null ) {
-				joinCacheList.sort( function( a, b ) {
-					if ( parseInt( a._index, 10 ) > parseInt( b._index, 10 ) ) return 1;
-					if ( parseInt( a._index, 10 ) < parseInt( b._index, 10 ) ) return -1;
-					return 0;
-	    		} );
-			}
-			else if ( cacheData._range != null ) {
-				joinCacheList.sort( function( a, b ) {
-					if ( parseInt( a._range, 10 ) > parseInt( b._range, 10 ) ) return 1;
-					if ( parseInt( a._range, 10 ) < parseInt( b._range, 10 ) ) return -1;
-					return 0;
-	    		} );
-			}
+             if ( cacheData._index != null ) {
+                 joinCacheList.sort( function( a, b ) {
+                     if ( parseInt( a._index, 10 ) > parseInt( b._index, 10 ) ) return 1;
+                     if ( parseInt( a._index, 10 ) < parseInt( b._index, 10 ) ) return -1;
+                     return 0;
+                 } );
+             }
+             else if ( cacheData._range != null ) {
+                 joinCacheList.sort( function( a, b ) {
+                     if ( parseInt( a._range, 10 ) > parseInt( b._range, 10 ) ) return 1;
+                     if ( parseInt( a._range, 10 ) < parseInt( b._range, 10 ) ) return -1;
+                     return 0;
+                 } );
+             }
 
-    	    var fileOutputStream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance( Ci.nsIFileOutputStream );
-    	    var fileInputStream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance( Ci.nsIFileInputStream );
-            var binaryInputStream = Cc["@mozilla.org/binaryinputstream;1"].createInstance( Ci.nsIBinaryInputStream );
-			var binaryData;
-			var binaryDataSize;
+             var fileOutputStream = Cc["@mozilla.org/network/file-output-stream;1"].createInstance( Ci.nsIFileOutputStream );
+             var fileInputStream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance( Ci.nsIFileInputStream );
+             var binaryInputStream = Cc["@mozilla.org/binaryinputstream;1"].createInstance( Ci.nsIBinaryInputStream );
+             var binaryData;
+             var binaryDataSize;
 
-			try {
-	    	    fileOutputStream.init( file, 0x0a, -1, 0 ); // PR_WRONLY | PR_CREATE_FILE
+             try {
+                 fileOutputStream.init( file, 0x0a, -1, 0 ); // PR_WRONLY | PR_CREATE_FILE
 
-		        for ( var i = 0; i < joinCacheList.length; i ++ ) {
-			        	joinCacheList[i].close();
+                 for ( var i = 0; i < joinCacheList.length; i ++ ) {
+                         joinCacheList[i].close();
 
-						fileInputStream.init( joinCacheList[i]._file, 0x01, -1, 0 ); // PR_RDONLY
-						binaryInputStream.setInputStream( fileInputStream );
+                         fileInputStream.init( joinCacheList[i]._file, 0x01, -1, 0 ); // PR_RDONLY
+                         binaryInputStream.setInputStream( fileInputStream );
 
-						if ( i == joinCacheList.length - 1 ) {
-							binaryDataSize = binaryInputStream.available();
-						}
-						else if ( joinCacheList[i]._range == null || joinCacheList[i + 1]._range == null ) {
-							binaryDataSize = binaryInputStream.available();
-						}
-						else {
-							binaryDataSize = joinCacheList[i + 1]._range.split( "-" )[0] - joinCacheList[i]._range.split( "-" )[0];
+                         if ( i == joinCacheList.length - 1 ) {
+                             binaryDataSize = binaryInputStream.available();
+                         }
+                         else if ( joinCacheList[i]._range == null || joinCacheList[i + 1]._range == null ) {
+                             binaryDataSize = binaryInputStream.available();
+                         }
+                         else {
+                             binaryDataSize = joinCacheList[i + 1]._range.split( "-" )[0] - joinCacheList[i]._range.split( "-" )[0];
 
-							if ( binaryDataSize < 0 || binaryDataSize > binaryInputStream.available() )
-								throw NS_ERROR_FILE_COPY_OR_MOVE_FAILED;
-						}
+                             if ( binaryDataSize < 0 || binaryDataSize > binaryInputStream.available() )
+                                 throw NS_ERROR_FILE_COPY_OR_MOVE_FAILED;
+                         }
 
-						binaryData = binaryInputStream.readBytes( binaryDataSize );
-						fileOutputStream.write( binaryData, binaryData.length );
+                         binaryData = binaryInputStream.readBytes( binaryDataSize );
+                         fileOutputStream.write( binaryData, binaryData.length );
 
-						binaryInputStream.close();
-						fileInputStream.close();
+                         binaryInputStream.close();
+                         fileInputStream.close();
 
-						joinCacheList[i]._savedFile = file;
-						joinCacheList[i]._isSaved = true;
+                         joinCacheList[i]._savedFile = file;
+                         joinCacheList[i]._isSaved = true;
 
-			        	joinCacheList[i].resume();
-		        }
+                         joinCacheList[i].resume();
+                 }
 
-		        fileOutputStream.close();
-			} catch ( ex ) {
-			    alert( ex.message );
-			}
-	    }
+                 fileOutputStream.close();
+             } catch ( ex ) {
+                 alert( ex.message );
+             }
+         }
     },
 
     onClearCommand: function( isForced ) {
@@ -412,22 +415,22 @@ var cacheCtrl = {
 
         this._clipboardHelper.copyString( url );
         // var cacheData = this.getCurrentCacheData();
-        //  
+        //
         // if ( cacheData )
         //     this._clipboardHelper.copyString( cacheData._url );
     },
 
     onOpenFolderCommand: function () {
         var cacheData = this.getCurrentCacheData();
-		var file;
+         var file;
 
         if ( ! cacheData )
             return;
 
-		if ( cacheData._savedFile )
-			file = cacheData._savedFile;
-		else
-			file = cacheData._file;
+         if ( cacheData._savedFile )
+             file = cacheData._savedFile;
+         else
+             file = cacheData._file;
 
         try {
             file.QueryInterface( Ci.nsILocalFile ).reveal();

@@ -63,16 +63,16 @@
         <button command="cachelist-clear-command" />
 
         <label value="&cachelist.url-filter.label;" accesskey="&cachelist.url-filter.accesskey;" control="cachelist-url-filter" />
-        <textbox id="cachelist-url-filter" />
+        <textbox id="cachelist-url-filter" flex="1" />
         <label value="&cachelist.content-type-filter.label;" accesskey="&cachelist.content-type-filter.accesskey;" control="cachelist-content-type-filter" />
-        <textbox id="cachelist-content-type-filter" />
+        <textbox id="cachelist-content-type-filter" flex="1" />
 
         <label value="&cachelist.id-filter.label;" accesskey="&cachelist.id-filter.accesskey;" control="cachelist-id-filter" />
-        <textbox id="cachelist-id-filter" />
+        <textbox id="cachelist-id-filter" flex="1"/>
         <label value="&cachelist.index-filter.label;" accesskey="&cachelist.index-filter.accesskey;" control="cachelist-index-filter" />
-        <textbox id="cachelist-index-filter" />
+        <textbox id="cachelist-index-filter" flex="1" />
         <label value="&cachelist.range-filter.label;" accesskey="&cachelist.range-filter.accesskey;" control="cachelist-range-filter" />
-        <textbox id="cachelist-range-filter" />
+        <textbox id="cachelist-range-filter" flex="1" />
       </hbox>
       <tree id="cachelist-tree" enableColumnDrag="true" flex="1" onselect="cacheCtrl.onSelect();">
         <treecols>

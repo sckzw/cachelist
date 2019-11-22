@@ -10,6 +10,9 @@
       <preference id="extensions.cachelist.tempDir"           name="extensions.cachelist.tempDir"           type="file" />
       <preference id="extensions.cachelist.urlFilter"         name="extensions.cachelist.urlFilter"         type="string" />
       <preference id="extensions.cachelist.contentTypeFilter" name="extensions.cachelist.contentTypeFilter" type="string" />
+      <preference id="extensions.cachelist.idFilter"          name="extensions.cachelist.idFilter"          type="string" />
+      <preference id="extensions.cachelist.indexFilter"       name="extensions.cachelist.indexFilter"       type="string" />
+      <preference id="extensions.cachelist.rangeFilter"       name="extensions.cachelist.rangeFilter"       type="string" />
     </preferences>
 
     <groupbox>
@@ -44,12 +47,24 @@
         </columns>
         <rows>
           <row>
+            <label accesskey="&urlFilterTextbox.accesskey;" control="urlFilterTextbox">&urlFilterTextbox.label;</label>
+            <textbox id="urlFilterTextbox" preference="extensions.cachelist.urlFilter" flex="1" />
+          </row>
+          <row>
             <label accesskey="&contentTypeFilterTextbox.accesskey;" control="contentTypeFilterTextbox">&contentTypeFilterTextbox.label;</label>
             <textbox id="contentTypeFilterTextbox" preference="extensions.cachelist.contentTypeFilter" flex="1" />
           </row>
           <row>
-            <label accesskey="&urlFilterTextbox.accesskey;" control="urlFilterTextbox">&urlFilterTextbox.label;</label>
-            <textbox id="urlFilterTextbox" preference="extensions.cachelist.urlFilter" flex="1" />
+            <label accesskey="&idFilterTextbox.accesskey;" control="idFilterTextbox">&idFilterTextbox.label;</label>
+            <textbox id="idFilterTextbox" preference="extensions.cachelist.idFilter" flex="1" />
+          </row>
+          <row>
+            <label accesskey="&indexFilterTextbox.accesskey;" control="indexFilterTextbox">&indexFilterTextbox.label;</label>
+            <textbox id="indexFilterTextbox" preference="extensions.cachelist.indexFilter" flex="1" />
+          </row>
+          <row>
+            <label accesskey="&rangeFilterTextbox.accesskey;" control="rangeFilterTextbox">&rangeFilterTextbox.label;</label>
+            <textbox id="rangeFilterTextbox" preference="extensions.cachelist.rangeFilter" flex="1" />
           </row>
         </rows>
       </grid>

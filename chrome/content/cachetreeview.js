@@ -55,8 +55,16 @@ CacheTreeView.prototype = {
                 case "cachelist-content-type":   return cacheData._contentType;
                 case "cachelist-content-length": return cacheData._contentLength;
                 case "cachelist-cache-size":     return cacheData._size;
-                case "cachelist-cache-file":     return cacheData._file.leafName;
-                case "cachelist-saved-file":     return cacheData._savedFile.leafName;
+                case "cachelist-cache-file":
+                    if ( cacheData._file == null )
+                        return '';
+                    else
+                        return cacheData._file.leafName;
+                case "cachelist-saved-file":
+                    if ( cacheData._savedFile == null )
+                        return '';
+                    else
+                        return cacheData._savedFile.leafName;
             }
         }
     },

@@ -89,33 +89,73 @@ var cacheCtrl = {
                 return;
 
             var contentType = channel.contentType;
+            var contentTypeRegexp = new RegExp( document.getElementById( "cachelist-content-type-filter" ).value );
+
+            if ( ! contentTypeRegexp.test( contentType ) )
+                return;
+
+            // 従来のフィルター
+            /*
             var contentTypeFilter = document.getElementById( "cachelist-content-type-filter" ).value;
 
             if ( contentType.indexOf( contentTypeFilter, 0 ) == -1 )
                 return;
+            */
 
             var cacheData = new CacheData();
 
             cacheData.init( aSubject, this._tempDirectory );
 
+            var idRegexp = new RegExp( document.getElementById( "cachelist-id-filter" ).value );
+            var indexRegexp = new RegExp( document.getElementById( "cachelist-index-filter" ).value );
+            var rangeRegexp = new RegExp( document.getElementById( "cachelist-range-filter" ).value );
+
+            var idResult = idRegexp.exec( url );
+            var indexResult = indexRegexp.exec( url );
+            var rangeResult = rangeRegexp.exec( url );
+
+            // 正規表現にマッチした文字列を取得する
+            // キャプチャが存在する場合は、キャプチャのみ結合する
+            if ( idResult != null ) {
+                if ( idResult.length > 1 )
+                    idResult.shift();
+
+                cacheData._id = idResult.join('');
+            }
+            if ( indexResult != null ) {
+                if ( indexResult.length > 1 )
+                    indexResult.shift();
+
+                cacheData._index = indexResult.join('');
+            }
+            if ( rangeResult != null ) {
+                if ( rangeResult.length > 1 )
+                    rangeResult.shift();
+
+                cacheData._range = rangeResult.join( '-' );
+            }
+
+            // 従来のフィルター
+            /*
             var idFilter = document.getElementById( "cachelist-id-filter" ).value + "="; // "id" + "=";
             var indexFilter = document.getElementById( "cachelist-index-filter" ).value + "="; // "segment" + "=";
             var rangeFilter = document.getElementById( "cachelist-range-filter" ).value + "="; // "range" + "=";
 
-             // URLからパラメータを抽出する
-             var parameters = channel.URI.QueryInterface( Ci.nsIURL ).query.split( "&" );
+            // URLからパラメータを抽出する
+            var parameters = channel.URI.QueryInterface( Ci.nsIURL ).query.split( "&" );
 
-             for ( var i = 0; i < parameters.length; i ++ ) {
-                 if ( cacheData._id == null && parameters[i].lastIndexOf( idFilter, 0 ) == 0 ) {
-                     cacheData._id = parameters[i].substr( idFilter.length );
-                 }
-                 if ( cacheData._index == null && parameters[i].lastIndexOf( indexFilter, 0 ) == 0 ) {
-                     cacheData._index = parameters[i].substr( indexFilter.length );
-                 }
-                 if ( cacheData._range == null && parameters[i].lastIndexOf( rangeFilter, 0 ) == 0 ) {
-                     cacheData._range = parameters[i].substr( rangeFilter.length );
-                 }
-             }
+            for ( var i = 0; i < parameters.length; i ++ ) {
+                if ( cacheData._id == null && parameters[i].lastIndexOf( idFilter, 0 ) == 0 ) {
+                    cacheData._id = parameters[i].substr( idFilter.length );
+                }
+                if ( cacheData._index == null && parameters[i].lastIndexOf( indexFilter, 0 ) == 0 ) {
+                    cacheData._index = parameters[i].substr( indexFilter.length );
+                }
+                if ( cacheData._range == null && parameters[i].lastIndexOf( rangeFilter, 0 ) == 0 ) {
+                    cacheData._range = parameters[i].substr( rangeFilter.length );
+                }
+            }
+            */
 
             this._cacheList.unshift( cacheData );
             this._cacheTreeBox.rowCountChanged( 0, 1 );

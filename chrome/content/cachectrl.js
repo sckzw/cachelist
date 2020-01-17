@@ -116,19 +116,19 @@ var cacheCtrl = {
 
             // 正規表現にマッチした文字列を取得する
             // キャプチャが存在する場合は、キャプチャのみ結合する
-            if ( idResult != null ) {
+            if ( idResult != null && idResult[0] != '' ) {
                 if ( idResult.length > 1 )
                     idResult.shift();
 
                 cacheData._id = idResult.join('');
             }
-            if ( indexResult != null ) {
+            if ( indexResult != null && indexResult[0] != '' ) {
                 if ( indexResult.length > 1 )
                     indexResult.shift();
 
                 cacheData._index = indexResult.join('');
             }
-            if ( rangeResult != null ) {
+            if ( rangeResult != null && rangeResult[0] != '' ) {
                 if ( rangeResult.length > 1 )
                     rangeResult.shift();
 
